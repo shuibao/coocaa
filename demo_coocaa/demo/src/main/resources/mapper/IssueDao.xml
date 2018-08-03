@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coocaa.demo.dao.IssueDao">
+
+    <select id="queryIssueAssignee" resultType="String">
+      select distinct
+        assignee
+      from
+        tb_issue
+    </select>
+
+    <select id="queryProjectEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+        select
+        assignee,project_name,resolution,issue_key,DATE_FORMAT(created,'%Y-%m-%d') AS new_created,story_point, all_time_spent
+        from tb_issue
+        <where>
+            <if test="RequestVo.getAssignee().size()==1">
+                and assignee in
+                <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+            and resolution = 1
+        </where>
+
+    </select>
+    
+    <select id="queryTimeStory" resultType="com.coocaa.demo.vo.IssueVo">
+        select
+        assignee,sum(story_point) as story_point ,DATE_FORMAT(created,'%Y-%m-%d') AS new_created
+        from tb_issue
+        <where>
+            <if test="RequestVo.getAssignee().size()==1">
+                and assignee in
+                <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        group by new_created
+    </select>
+    <select id="queryUnfixedTime" resultType="com.coocaa.demo.vo.IssueVo">
+        select
+        assignee,issue_key,all_original_estimate,all_remaining_estimate,project_name
+        from tb_issue
+        <where>
+            <if test="RequestVo.getAssignee().size()==1">
+                and assignee in
+                <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            and resolution = 0
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        order by issue_key asc
+    </select>
+    <select id="queryPersonEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+        select  assignee,sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+        from  tb_issue
+        <where>
+            and assignee in
+            <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and resolution = 1
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        group by assignee
+    </select>
+    <select id="queryIssueTime" resultType="com.coocaa.demo.vo.IssueVo">
+        select assignee,resolution,project_name,issue_key,all_original_estimate,all_time_spent
+        from tb_issue
+        <where>
+            and assignee in
+            <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and project_name in
+            <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+            </foreach>
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+    </select>
+    <select id="querySprintStory" resultType="com.coocaa.demo.vo.IssueVo">
+        select sprint, sum(story_point) as story_point
+        from tb_issue
+        <where>
+            and project_name in
+            <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        group by sprint
+    </select>
+    <select id="querySprintEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+        select sprint, sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+        from tb_issue
+        <where>
+            and resolution = 1
+            and project_name in
+            <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        group by sprint
+    </select>
+</mapper>

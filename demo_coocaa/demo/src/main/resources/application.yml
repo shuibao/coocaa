@@ -1,0 +1,45 @@
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/coocaa?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
+    #1）监控统计用的filter:stat
+    #2）日志用的filter:log4j
+    #3）防御sql注入的filter:wall
+    filters: stat
+    #初始连接数量
+    initialSize: 1
+#    最小连接数量
+    minIdle: 1
+#    最大连接数量
+    maxActive: 8
+#    1) Destroy线程会检测连接的间隔时间
+#    2) testWhileIdle的判断依据
+    timeBetweenEvictionRunsMillis: 60000
+#    Destory线程中如果检测到当前连接的最后活跃时间和当前时间的差值大于minEvictableIdleTimeMillis，则关闭当前连接。
+    minEvictableIdleTimeMillis: 300000
+#    用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、 testWhileIdle都不会其作用。在mysql中通常为select 'x'，在oracle中通常为select 1 from dual
+    validationQuery: select 'x'
+#    建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+#    申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnBorrow: false
+#    归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnReturn: false
+#    是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。
+    poolPreparedStatements: true
+#    要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。      在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+    maxOpenPreparedStatements: 20
+
+
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.coocaa.demo.entity
+server:
+  port: 8081
