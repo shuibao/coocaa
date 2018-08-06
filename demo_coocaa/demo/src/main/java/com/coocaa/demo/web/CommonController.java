@@ -3,13 +3,12 @@ package com.coocaa.demo.web;
 import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +21,18 @@ public class CommonController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(value = "/assginee",method = RequestMethod.GET)
-    private Map<String,Object>getIssueAssignee(HttpServletResponse respons){
-        respons.setHeader("Access-Control-Allow-Origin","*");
-        respons.setHeader("Access-Control-Allow-Credentials","true");
-        respons.setHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept, Connection, User-Agent, Cookie");
+    @RequestMapping("/demo")
+    public ModelAndView test(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("efficiency");
+        return mv;
+    }
 
+    @RequestMapping(value = "/assignee",method = RequestMethod.GET)
+    private Map<String,Object>getIssueAssignee(HttpServletResponse response,String projectName){
+        response.setHeader("Access-Control-Allow-Origin","*");
         Map<String,Object> modelMap = new HashMap<>();
-        List<String> assigneeList = issueService.queryIssueAssignee();
+        List<String> assigneeList = issueService.getIssueAssignee(projectName);
         Map<String,Object> resMap = new HashMap<>();
         resMap.put("assignee",assigneeList);
         if(assigneeList!=null&&assigneeList.size()!=0){
@@ -43,10 +46,10 @@ public class CommonController {
         return  modelMap;
     }
     @RequestMapping(value = "/projectname",method = RequestMethod.GET)
-    private Map<String,Object>getProductNameByAssignee(HttpServletResponse respons,String assignee){
-        respons.setHeader("Access-Control-Allow-Origin","*");
+    private Map<String,Object>getProductNameByAssignee(HttpServletResponse response,String assignee){
+        response.setHeader("Access-Control-Allow-Origin","*");
         Map<String,Object> modelMap = new HashMap<>();
-        List<String> productNameList = productService.queryProductNameByAssignee(assignee);
+        List<String> productNameList = issueService.getProductNameByAssignee(assignee);
         Map<String,Object> resMap = new HashMap<>();
         resMap.put("projectName",productNameList);
         if(productNameList!=null&&productNameList.size()!=0){

@@ -14,19 +14,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDao productDao;
 
-    @Override
-    public List<String> queryProductName() {
-        return productDao.queryProductName();
-    }
 
-    @Override
-    public List<String> queryProductNameByAssignee(String assignee) {
-        if(assignee!=null||assignee!=""){
-            return productDao.queryProductByAssignee(assignee);
-        }else{
-            return productDao.queryProductName();
-        }
-    }
+
 
 
 }

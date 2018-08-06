@@ -9,9 +9,25 @@
         assignee
       from
         tb_issue
+        <where>
+            <if test="projectName!=null and projectName.length()>0">
+                and project_name = #{projectName}
+            </if>
+        </where>
+      group by assignee asc
     </select>
-
-    <select id="queryProjectEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+    <select id="queryProductByAssignee" resultType="String">
+        select distinct
+        project_name
+        from
+        tb_issue
+        <where>
+            <if test="assignee!=null and assignee.length()>0">
+                and assignee = #{assignee}
+            </if>
+        </where>
+    </select>
+    <select id="queryWeekEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
         select
         assignee,project_name,resolution,issue_key,DATE_FORMAT(created,'%Y-%m-%d') AS new_created,story_point, all_time_spent
         from tb_issue
@@ -87,29 +103,74 @@
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
     </select>
-    <select id="querySprintStory" resultType="com.coocaa.demo.vo.IssueVo">
-        select sprint, sum(story_point) as story_point
+    <!--图表六 砍掉-->
+    <!--<select id="querySprintStory" resultType="com.coocaa.demo.vo.IssueVo">-->
+        <!--select sprint, sum(story_point) as story_point-->
+        <!--from tb_issue-->
+        <!--<where>-->
+            <!--and project_name in-->
+            <!--<foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">-->
+                <!--#{item}-->
+            <!--</foreach>-->
+            <!--and created between #{RequestVo.startTime} and #{RequestVo.endTime}-->
+        <!--</where>-->
+        <!--group by sprint-->
+    <!--</select>-->
+    <!--<select id="querySprintEfficiency" resultType="com.coocaa.demo.vo.IssueVo">-->
+        <!--select sprint, sum(story_point) as story_point,sum(all_time_spent) as all_time_spent-->
+        <!--from tb_issue-->
+        <!--<where>-->
+            <!--and resolution = 1-->
+            <!--and project_name in-->
+            <!--<foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">-->
+                <!--#{item}-->
+            <!--</foreach>-->
+            <!--and created between #{RequestVo.startTime} and #{RequestVo.endTime}-->
+        <!--</where>-->
+        <!--group by sprint-->
+    <!--</select>-->
+    <select id="queryPersonStory" resultType="com.coocaa.demo.vo.IssueVo">
+        select assignee,project_name,resolution,created,sum(story_point) as story_point
         from tb_issue
         <where>
             and project_name in
             <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
+            and resolution = #{resolution}
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
-        group by sprint
+        group by assignee asc
     </select>
-    <select id="querySprintEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
-        select sprint, sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+    <select id="queryProjectEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+        select project_name , sum(story_point) as story_point ,sum(all_time_spent) as all_time_spent
         from tb_issue
         <where>
+            and project_name in
+            <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
             and resolution = 1
+            and created between #{RequestVo.startTime} and #{RequestVo.endTime}
+        </where>
+        group by project_name
+    </select>
+    <select id="queryMemberEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
+        select  project_name ,assignee,sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+        from  tb_issue
+        <where>
             and project_name in
             <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
+            and assignee in
+            <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and resolution = 1
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
-        group by sprint
+        group by assignee
     </select>
+
 </mapper>

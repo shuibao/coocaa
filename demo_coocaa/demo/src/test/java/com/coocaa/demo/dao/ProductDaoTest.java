@@ -14,15 +14,6 @@ public class ProductDaoTest {
     @Autowired
     private ProductDao productDao;
 
-    @Test
-    public void queryProductKeyTest(){
-        List<String> res = productDao.queryProductName();
-        System.out.println(res.size());
-    }
 
-    @Test
-    public void queryAssigneeProjectTest(){
-        List<String> res = productDao.queryProductByAssignee("zhaolei01");
-        System.out.println(res.size());
-    }
+
 }

@@ -2,7 +2,7 @@ package com.coocaa.demo.vo;
 
 import java.util.List;
 
-public class Chart2 {
+public class Chart2Vo {
     private String projectName;
     private List<String> issueKey;
     private List<Integer> allOriginalEstimate;

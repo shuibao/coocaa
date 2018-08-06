@@ -1,17 +1,15 @@
 package com.coocaa.demo.service.impl;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.coocaa.demo.dao.IssueDao;
-import com.coocaa.demo.dao.ProductDao;
 import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.util.MathUtil;
-import com.coocaa.demo.vo.Chart2;
+import com.coocaa.demo.vo.Chart2Vo;
 import com.coocaa.demo.vo.IssueVo;
 import com.coocaa.demo.vo.RequestVo;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -27,12 +25,15 @@ public class IssueServiceImpl implements IssueService {
 
 
     @Override
-    public List<String> queryIssueAssignee() {
-        return issueDao.queryIssueAssignee();
+    public List<String> getIssueAssignee(String projectName) {
+        return issueDao.queryIssueAssignee(projectName);
     }
-
     @Override
-    public Map<String, Object> queryIssueAssigneeEfficiency(RequestVo requestVo) throws ParseException {
+    public List<String> getProductNameByAssignee(String assignee) {
+        return issueDao.queryProductByAssignee(assignee);
+    }
+    @Override
+    public Map<String, Object> getIssueAssigneeEfficiency(RequestVo requestVo) throws ParseException {
         List<IssueVo>issueVoList = new ArrayList<>();
         //处理前端传入的日期，得出前28天，每7天为一周
         Calendar c = Calendar.getInstance();
@@ -48,7 +49,7 @@ public class IssueServiceImpl implements IssueService {
         //数据库查询时间的开始时间为第一周的时间
         requestVo.setStartTime(firstWeek);
         //从数据库查询数据
-        issueVoList=issueDao.queryProjectEfficiency(requestVo);
+        issueVoList=issueDao.queryWeekEfficiency(requestVo);
         //存每周的总耗费时间，有四周，所以长度为4 0对应第一周，1第二周，2第三周，3第四周数据
         int[]timeArray = new int[4];
         //存每周的总工作量，同上
@@ -99,11 +100,10 @@ public class IssueServiceImpl implements IssueService {
         resMap.put("efficiency",efficiencyArray);
         resMap.put("averageEfficiency",averageEfficiency);
         return resMap;
-
     }
 
     @Override
-    public Map<String, Object> queryTimeStory(RequestVo requestVo) {
+    public Map<String, Object> getTimeStory(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
         issueVoList = issueDao.queryTimeStory(requestVo);
         //存放每个问题的创建时间
@@ -124,7 +124,7 @@ public class IssueServiceImpl implements IssueService {
     }
 
     @Override
-    public Map<String, Object> queryUnfixedTime(RequestVo requestVo) {
+    public Map<String, Object> getUnfixedTime(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
         issueVoList = issueDao.queryUnfixedTime(requestVo);
         ArrayList<String>issueKeyList = new ArrayList<>();
@@ -146,7 +146,7 @@ public class IssueServiceImpl implements IssueService {
     }
 
     @Override
-    public Map<String, Object> queryPersonEfficiency(RequestVo requestVo) {
+    public Map<String, Object> getPersonEfficiency(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
         issueVoList = issueDao.queryPersonEfficiency(requestVo);
         ArrayList<String>assigneeList = new ArrayList<>();
@@ -176,13 +176,13 @@ public class IssueServiceImpl implements IssueService {
     }
 
     @Override
-    public List<Chart2> queryIssueTime(RequestVo requestVo) {
+    public List<Chart2Vo> getIssueTime(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
         issueVoList = issueDao.queryIssueTime(requestVo);
-        List<Chart2> chart2List = new ArrayList<>();
+        List<Chart2Vo> chart2List = new ArrayList<>();
         for(int i = 0;i < requestVo.getProjectName().size();i++){
-            Chart2 unFixChart2 = new Chart2();
-            Chart2 fixChart2 = new Chart2();
+            Chart2Vo unFixChart2 = new Chart2Vo();
+            Chart2Vo fixChart2 = new Chart2Vo();
             unFixChart2.setProjectName(requestVo.getProjectName().get(i));
             unFixChart2.setResolution(unfixStatue);
             fixChart2.setProjectName(requestVo.getProjectName().get(i));
@@ -222,28 +222,150 @@ public class IssueServiceImpl implements IssueService {
     }
 
     @Override
-    public Map<String, Object> querySprintStoryAndEfficiency(RequestVo requestVo) {
-        List<IssueVo>resStoryList = new ArrayList<>();
-        resStoryList = issueDao.querySprintStory(requestVo);
-        List<IssueVo>resEfficiencyList = new ArrayList<>();
-        resEfficiencyList = issueDao.querySprintEfficiency(requestVo);
-        ArrayList<String>sprintList = new ArrayList<>();
-        ArrayList<String>storyList = new ArrayList<>();
-        ArrayList<String>efficiencyList = new ArrayList<>();
-        int allStory = 0;
-        for (int i = 0;i<resStoryList.size();i++){
-            storyList.add(String.valueOf(resStoryList.get(i).getStoryPoint()));
-            sprintList.add(resStoryList.get(i).getSprint());
-            allStory+=resStoryList.get(i).getStoryPoint();
-            efficiencyList.add(MathUtil.division(resEfficiencyList.get(i).getStoryPoint(),resEfficiencyList.get(i).getAllTimeSpent()));
+    public Map<String, Object> getPersonStory(RequestVo requestVo) {
+        List<IssueVo>fixIssueVoList = new ArrayList<>();
+        List<IssueVo>unFixIssueVoList = new ArrayList<>();
+        List<String> assigneeList = new ArrayList<>();
+        assigneeList = issueDao.queryIssueAssignee(requestVo.getProjectName().get(0));//根据项目名获取该项目的所有人员
+        fixIssueVoList = issueDao.queryPersonStory(requestVo,fixStatue); //完成工作量集合（没有已完成的人员不包含在内）
+        unFixIssueVoList = issueDao.queryPersonStory(requestVo,unfixStatue);//未完成工作量集合（没有未完成工作的人员不包含在内）
+        ArrayList<Integer>allStoryPointList=new ArrayList<>(); //每个人的总工作量
+        ArrayList<Integer>unFixStoryPointList=new ArrayList<>();//每个人的未完成工作量
+        ArrayList<Integer>fixStoryPointList=new ArrayList<>();//每个人的完成工作量
+        ArrayList<String>proportionList=new ArrayList<>();//工作量占比
+        for(int i = 0; i<assigneeList.size();i++){
+            boolean temp1=false;
+            boolean temp2=false;
+            //按返回的经办人list顺序获取每个人的完成工作量
+            for (int j = 0; j <fixIssueVoList.size() ; j++) {
+                if(assigneeList.get(i).equals(fixIssueVoList.get(j).getAssignee())){
+                    fixStoryPointList.add(fixIssueVoList.get(j).getStoryPoint());
+                    temp1 =true;
+                    break;
+                }
+            }
+            //如果该人员没有完成的工作则为0
+            if(!temp1)fixStoryPointList.add(0);
+            //按返回的经办人list顺序获取每个人的未完成工作量
+            for (int x = 0; x <unFixIssueVoList.size() ; x++) {
+                if(assigneeList.get(i).equals(unFixIssueVoList.get(x).getAssignee())){
+                    unFixStoryPointList.add(unFixIssueVoList.get(x).getStoryPoint());
+                    temp2=true;
+                    break;
+                }
+            }
+            //如果该人员没有未完成的工作则为0
+            if(!temp2)unFixStoryPointList.add(0);
+            //获取该人员的总工作量
+            allStoryPointList.add(fixStoryPointList.get(i)+unFixStoryPointList.get(i));
+        }
+        //求每个人的工作量占比
+        DecimalFormat df=new DecimalFormat("0.00");
+        int allStoryPoint = MathUtil.sum(allStoryPointList); //所有人的总工作量
+        for (int i = 0; i <allStoryPointList.size() ; i++) {
+            String res = df.format((float)allStoryPointList.get(i)/allStoryPoint*100);
+            res+='%';
+            proportionList.add(res);
         }
         Map<String,Object>resMap = new HashMap<>();
-        resMap.put("sprint",sprintList);
-        resMap.put("sprintStoryPoint",storyList);
-        resMap.put("efficiency",efficiencyList);
-        resMap.put("allStoryPoint",allStory);
+        resMap.put("assignee",assigneeList);
+        resMap.put("allStoryPoint",allStoryPointList);
+        resMap.put("fixStoryPoint",fixStoryPointList);
+        resMap.put("unFixStoryPoint",unFixStoryPointList);
+        resMap.put("proportion",proportionList);
         return resMap;
     }
+
+    @Override
+    public Map<String, Object> getProjectEfficiency(RequestVo requestVo) {
+        List<IssueVo> issueVoList = issueDao.queryProjectEfficiency(requestVo);
+        List<String> projectList =new ArrayList<>();
+        List<String> efficiencyList =new ArrayList<>();
+        for (int i = 0; i < issueVoList.size(); i++) {
+            String projectName = issueVoList.get(i).getProjectName();
+            projectList.add(projectName);
+           // int personNum = issueDao.queryIssueAssignee(projectName).size();
+            int storyPoint = issueVoList.get(i).getStoryPoint();
+            int spentTime =issueVoList.get(i).getAllTimeSpent();
+            String efficiency = MathUtil.division(storyPoint,spentTime);
+            efficiencyList.add(efficiency);
+        }
+        Map<String,Object> resMap = new HashMap<>();
+        resMap.put("projectName",projectList);
+        resMap.put("efficiency",efficiencyList);
+        return resMap;
+    }
+
+    @Override
+    public Map<String, Object> getProjectStoryPoint(RequestVo requestVo) {
+        List<IssueVo> issueVoList = issueDao.queryProjectEfficiency(requestVo);
+        List<String> projectList =new ArrayList<>();
+        List<Integer> storyPointList = new ArrayList<>();
+        List<Integer> spentTimeList =new ArrayList<>();
+        for (int i = 0; i < issueVoList.size(); i++) {
+            String projectName = issueVoList.get(i).getProjectName();
+            projectList.add(projectName);
+            int storyPoint = issueVoList.get(i).getStoryPoint();
+            int spentTime =issueVoList.get(i).getAllTimeSpent();
+            storyPointList.add(storyPoint);
+            spentTimeList.add(spentTime);
+        }
+        Map<String,Object> resMap = new HashMap<>();
+        resMap.put("projectName",projectList);
+        resMap.put("storyPoint",storyPointList);
+        resMap.put("spentTime",spentTimeList);
+        return resMap;
+    }
+    @Override
+    public Map<String, Object> getMemberEfficiency(RequestVo requestVo) {
+        List<IssueVo>issueVoList = new ArrayList<>();
+        issueVoList = issueDao.queryMemberEfficiency(requestVo);
+        ArrayList<String>assigneeList = new ArrayList<>();
+        ArrayList<String>efficiencyList =new ArrayList<>();
+        //int sumStory = 0,sumTimeSpent = 0;
+        Collections.sort(issueVoList, new Comparator<IssueVo>() {
+            @Override
+            public int compare(IssueVo o1, IssueVo o2) {
+                return MathUtil.division(o2.getStoryPoint(),o2.getAllTimeSpent()).compareTo(MathUtil.division(o1.getStoryPoint(),o1.getAllTimeSpent()));
+            }
+        });
+        for (int i = 0; i < issueVoList.size(); i++) {
+            assigneeList.add(issueVoList.get(i).getAssignee());
+            efficiencyList.add(MathUtil.division(issueVoList.get(i).getStoryPoint(),issueVoList.get(i).getAllTimeSpent()));
+            // sumStory += issueVoList.get(i).getStoryPoint();
+            // sumTimeSpent += issueVoList.get(i).getAllTimeSpent();
+        }
+        //String averageEfficiency = MathUtil.division(sumStory,sumTimeSpent);
+        Map<String,Object> resMap = new HashMap<>();
+        resMap.put("assignee",assigneeList);
+        resMap.put("efficiency",efficiencyList);
+        resMap.put("averageEfficiency",averageEfficiency);
+        return resMap;
+    }
+//  砍掉
+//    @Override
+//    public Map<String, Object> querySprintStoryAndEfficiency(RequestVo requestVo) {
+//        List<IssueVo>resStoryList = new ArrayList<>();
+//        resStoryList = issueDao.querySprintStory(requestVo);
+//        List<IssueVo>resEfficiencyList = new ArrayList<>();
+//        resEfficiencyList = issueDao.querySprintEfficiency(requestVo);
+//        ArrayList<String>sprintList = new ArrayList<>();
+//        ArrayList<String>storyList = new ArrayList<>();
+//        ArrayList<String>efficiencyList = new ArrayList<>();
+//        int allStory = 0;
+//        for (int i = 0;i<resStoryList.size();i++){
+//            storyList.add(String.valueOf(resStoryList.get(i).getStoryPoint()));
+//            sprintList.add(resStoryList.get(i).getSprint());
+//            allStory+=resStoryList.get(i).getStoryPoint();
+//            efficiencyList.add(MathUtil.division(resEfficiencyList.get(i).getStoryPoint(),resEfficiencyList.get(i).getAllTimeSpent()));
+//        }
+//        Map<String,Object>resMap = new HashMap<>();
+//        resMap.put("sprint",sprintList);
+//        resMap.put("sprintStoryPoint",storyList);
+//        resMap.put("efficiency",efficiencyList);
+//        resMap.put("allStoryPoint",allStory);
+//        return resMap;
+//    }
 
 
 }

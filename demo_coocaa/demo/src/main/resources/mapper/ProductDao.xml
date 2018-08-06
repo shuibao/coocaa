@@ -3,15 +3,5 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.coocaa.demo.dao.ProductDao">
-    <select id="queryProductByAssignee" resultType="String">
-        select distinct
-        project_name
-        from
-        tb_project
-        where project_leader = #{assignee}
-    </select>
-    <select id="queryProductName" resultType="String">
-        select project_Name
-        from tb_project
-    </select>
+
 </mapper>

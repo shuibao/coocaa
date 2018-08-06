@@ -1,16 +1,14 @@
 package com.coocaa.demo.web;
 
 import com.coocaa.demo.service.IssueService;
-import com.coocaa.demo.vo.Chart2;
+import com.coocaa.demo.vo.Chart2Vo;
 import com.coocaa.demo.vo.RequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +16,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/person")
-public class IssueController {
+public class PersonController {
     @Autowired
     private IssueService issueService;
-
+    //图表一 工作效率
     @RequestMapping(value = "/efficiency",method = RequestMethod.POST)
     private Map<String,Object>getIssueAssigneeEfficiency(HttpServletResponse response, RequestVo requestVo) throws RuntimeException {
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -29,7 +27,7 @@ public class IssueController {
         Map<String, Object> res = new HashMap<>();
         if(requestVo!=null&&requestVo.getAssignee()!=null&&requestVo.getEndTime()!=null){
             try{
-                res=issueService.queryIssueAssigneeEfficiency(requestVo);
+                res=issueService.getIssueAssigneeEfficiency(requestVo);
                 if(res.size()!=0&&res!=null) {
                     modelMap.put("success", true);
                     modelMap.put("msg", "");
@@ -50,6 +48,7 @@ public class IssueController {
 
         return modelMap;
     }
+    //图表三（任务图-单人）
     @RequestMapping(value = "/storypoint",method = RequestMethod.POST)
     private Map<String,Object>getTimeStory(HttpServletResponse response, RequestVo requestVo) throws RuntimeException{
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -57,7 +56,7 @@ public class IssueController {
         Map<String, Object> res = new HashMap<>();
         if(requestVo!=null&&requestVo.getAssignee()!=null&&requestVo.getStartTime()!=null&&requestVo.getEndTime()!=null){
             try {
-                res = issueService.queryTimeStory(requestVo);
+                res = issueService.getTimeStory(requestVo);
                 if(res.size()!=0&&res!=null) {
                     modelMap.put("success", true);
                     modelMap.put("msg", "");
@@ -76,6 +75,7 @@ public class IssueController {
         }
         return modelMap;
     }
+//    使用：图表四（剩余工作报告-单人）
     @RequestMapping(value = "/remaintime",method = RequestMethod.POST)
     private Map<String,Object>getUnfixedTime(HttpServletResponse response, RequestVo requestVo) throws RuntimeException{
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -83,7 +83,7 @@ public class IssueController {
         Map<String, Object> res = new HashMap<>();
         if(requestVo!=null&&requestVo.getAssignee()!=null&&requestVo.getStartTime()!=null&&requestVo.getEndTime()!=null){
             try {
-                res = issueService.queryUnfixedTime(requestVo);
+                res = issueService.getUnfixedTime(requestVo);
                 if(res.size()!=0&&res!=null) {
                     modelMap.put("success", true);
                     modelMap.put("msg", "");
@@ -102,6 +102,7 @@ public class IssueController {
         }
         return modelMap;
     }
+    //图表五（效率比较图-多人）
     @RequestMapping(value = "/compare",method = RequestMethod.POST)
     private Map<String,Object>getPersonEfficiency(HttpServletResponse response, RequestVo requestVo) throws RuntimeException{
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -109,7 +110,7 @@ public class IssueController {
         Map<String, Object> res = new HashMap<>();
         if(requestVo!=null&&requestVo.getAssignee()!=null&&requestVo.getStartTime()!=null&&requestVo.getEndTime()!=null){
             try {
-                res = issueService.queryPersonEfficiency(requestVo);
+                res = issueService.getPersonEfficiency(requestVo);
                 if(res.size()!=0&&res!=null) {
                     modelMap.put("success", true);
                     modelMap.put("msg", "");
@@ -128,14 +129,15 @@ public class IssueController {
         }
         return modelMap;
     }
+    //图表二（细分工作量-单人）
     @RequestMapping(value = "/issuetime",method = RequestMethod.POST)
     private Map<String,Object>getqueryIssueTime(HttpServletResponse response, RequestVo requestVo) throws RuntimeException{
         response.setHeader("Access-Control-Allow-Origin", "*");
         Map<String,Object> modelMap = new HashMap<>();
-        List<Chart2> res = new ArrayList<>();
+        List<Chart2Vo> res = new ArrayList<>();
         if(requestVo!=null&&requestVo.getAssignee()!=null&&requestVo.getStartTime()!=null&&requestVo.getEndTime()!=null){
             try {
-                res = issueService.queryIssueTime(requestVo);
+                res = issueService.getIssueTime(requestVo);
                 if(res.size()!=0&&res!=null) {
                     modelMap.put("success", true);
                     modelMap.put("msg", "");
@@ -154,4 +156,6 @@ public class IssueController {
         }
         return modelMap;
     }
+
+
 }

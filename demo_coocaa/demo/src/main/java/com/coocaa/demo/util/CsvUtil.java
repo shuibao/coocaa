@@ -174,7 +174,7 @@ public class CsvUtil {
                 //System.out.println("------------>"+cell);
                 if(csvFileList.get(row)[indexs[10]].equals("已解决")){
                     csvFileList.get(row)[indexs[10]]="1";
-                }else if(csvFileList.get(row)[indexs[10]].equals("未解决")){
+                }else if(csvFileList.get(row)[indexs[10]].equals("未解决")||csvFileList.get(row)[indexs[10]].equals("")){
                     csvFileList.get(row)[indexs[10]]="0";
                 }else{
                     csvFileList.get(row)[indexs[10]]="-1";
@@ -188,7 +188,7 @@ public class CsvUtil {
 
                 if(csvFileList.get(row)[indexs[0]].equals("")|| csvFileList.get(row)[indexs[1]].equals("")|| csvFileList.get(row)[indexs[2]].equals("")|| csvFileList.get(row)[indexs[3]].equals("")|| csvFileList.get(row)[indexs[4]].equals("")||
                         csvFileList.get(row)[indexs[5]].equals("")|| csvFileList.get(row)[indexs[6]].equals("")|| csvFileList.get(row)[indexs[7]].equals("")|| csvFileList.get(row)[indexs[8]].equals("")|| csvFileList.get(row)[indexs[9]].equals("")||
-                        csvFileList.get(row)[indexs[10]].equals("")|| csvFileList.get(row)[indexs[11]].equals("")|| csvFileList.get(row)[indexs[12]].equals("")|| csvFileList.get(row)[indexs[13]].equals("")|| csvFileList.get(row)[indexs[14]].equals("")||
+                        csvFileList.get(row)[indexs[11]].equals("")|| csvFileList.get(row)[indexs[12]].equals("")|| csvFileList.get(row)[indexs[13]].equals("")|| csvFileList.get(row)[indexs[14]].equals("")||
                         csvFileList.get(row)[indexs[15]].equals("")|| csvFileList.get(row)[indexs[16]].equals("")|| csvFileList.get(row)[indexs[17]].equals("")|| csvFileList.get(row)[indexs[18]].equals("")|| csvFileList.get(row)[indexs[19]].equals("")||
                         csvFileList.get(row)[indexs[20]].equals("")|| csvFileList.get(row)[indexs[21]].equals("")|| csvFileList.get(row)[indexs[22]].equals("")|| csvFileList.get(row)[indexs[23]].equals("")|| csvFileList.get(row)[indexs[24]].equals("")|| csvFileList.get(row)[indexs[25]].equals("")|| csvFileList.get(row)[indexs[26]].equals("")) {
                     notUsedWriter.writeRecord(csvContent);
