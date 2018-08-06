@@ -4,7 +4,6 @@ import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.vo.Chart2Vo;
 import com.coocaa.demo.vo.IssueVo;
 import com.coocaa.demo.vo.RequestVo;
-import com.sun.corba.se.spi.ior.ObjectKey;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
