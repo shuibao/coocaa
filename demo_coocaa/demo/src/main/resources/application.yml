@@ -2,12 +2,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/coocaa?useUnicode=true&characterEncoding=utf8&useSSL=false
-    username: root
-    password: 123456
-  #  url: jdbc:mysql://120.78.67.238:3306/coocaa?useUnicode=true&characterEncoding=utf8&useSSL=false
-  #  username: work
-  #  password: Lxq7253046!
+#    url: jdbc:mysql://localhost:3306/coocaa?useUnicode=true&characterEncoding=utf8&useSSL=false
+#    username: root
+#    password: 123456
+    url: jdbc:mysql://120.78.67.238:3306/coocaa?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: work
+    password: Lxq7253046!
     type: com.alibaba.druid.pool.DruidDataSource
     #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
     #1）监控统计用的filter:stat
@@ -38,8 +38,12 @@ spring:
 #    要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。      在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
     maxOpenPreparedStatements: 20
 
-  thymeleaf:
-    prefix: classpath:/templates/
+  mvc:
+    view:
+      prefix: /html/
+      suffix: .html
+#    static-path-pattern:
+
 
 mybatis:
   config-location: classpath:mybatis-config.xml

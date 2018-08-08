@@ -26,24 +26,21 @@ $(function(){
     });
 })
 //图表
-var myChart1 = echarts.init(document.getElementById('chartmain'));
-			myChart1.setOption(
-				option1 = {
+var myChart = echarts.init(document.getElementById('chartmain'));
+			myChart.setOption(
+				option = {
 					title:{
-						text:'工作效率',
-						textStyle:{
-							color:'#000000',
-						},
+						text:'效率比较',
 						left:'center',
 					},
 					tooltip:{
 						show:true,
-						trigger:'axis',
+						trigger:'axis',	
 						axisPointer:{
 							show:false,
 						}
 					},
-					gird:{
+					grid:{
 						left:'3%',
 						right:'15%',
 						bottom:"10%",
@@ -52,22 +49,16 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 					legend:{
 						name:'工作效率',
 						selectedMode:false,
-						right:20,
-						top:10,
+						right: 10,
+        				top: 20,
 					},
 					xAxis:[
 						{
-							name:'时间',
+							name:'工作人员',
 							show:true,
 							type:'category',
-							data:[],//'1月','2月','3月','4月','5月'
-							axisLabel:{
-								interval: 0,
-								fontStyle:'italic',
-								fontSize:'13',
-								lineHeight:40,
-							}
-     					}
+							data:[],
+						}
 					],
 					yAxis:[
 						{
@@ -79,20 +70,11 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 						{
 							name:"工作效率",
 							type:'bar',
-							data:[],//2.0, 4.9, 7.0, 23.2, 25.6
-							barMaxWidth:60,
-							itemStyle: {
-							        normal: {
-							            color: new echarts.graphic.LinearGradient(
-							                0, 0, 0, 1,
-							                [
-							                    {offset: 0, color: '#FFCC66'},
-							                    {offset: 0.5, color: '#FFCC33'},
-							                    {offset: 1, color: '#FFCC00'}
-							                ]
-							            )
-							        }
-							   },
+							data:[],
+							barMaxWidth:30,
+							itemStyle:{
+								color:"#0066FF",
+							},
 							label: {
 							      normal: {
 							          show: true,
@@ -107,9 +89,6 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 									{
 										name:'标准线',
 										yAxis:'',
-										lineStyle:{
-											color:'rgba(128, 128, 128, 0.5)'
-										},
 									}
 								]
 							},
@@ -117,8 +96,6 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 					],
 				}
 			);
-
-
 //模糊搜索
 $(document).ready(function(){
 	$.ajax({
@@ -131,7 +108,7 @@ $(document).ready(function(){
 			var temp = [];
 			temp = data.data['assignee'];
 			for(var j=0;j<temp.length;j++){
-				$('#down').append('<li>'+temp[j]+'</li>');
+				$('#ul1').append("<li><input type='checkbox' name='check' value='"+temp[j]+"'>"+temp[j]+"</li>");
 			}
 			$(document).bind('click', function(e) {
 				var e = e || window.event; //浏览器兼容性 
@@ -142,65 +119,55 @@ $(document).ready(function(){
 					}
 					elem = elem.parentNode;
 				}
-				$('#down').css('display', 'none'); //点击的不是div或其子元素 
+				$('#ul1').css('display', 'none'); //点击的不是div或其子元素 
 			});
-				$("li").click(function(){
-					$("#input").val($(this).text());
-					$("#down").css("display","none");
-					nameDate();
-				});
-				$("#input").click(function(){
-					fun();
-				});
-				$("#input").keydown(function(){
-					fun();
-				});
-				function fun(){
-					var queryStr = $.trim($("#input").val());
-					if(queryStr === ''){
-						$("#down").css("display","block");
-							$("li").show();
-						}else{
-							$("li").hide().filter(":contains('"+queryStr+"')").show();
-						}
-				}
-				
+			$('#input').click(function(){
+				$("#ul1").css("display","block");
+				$("input[name='check']").change(function(){
+					var result='';
+			        $("input[name='check']:checked").each(function(){    
+			            result += $(this).val()+'、';
+				    });
+				    if(result!=""){
+				        result=result.substring(0,result.lastIndexOf('、')); 
+			    	}
+				    $("#input").val(result);
+				    nameDate();
+				})
+			})
 		}
 	})
 })
+//实现复选框
 
-//向后台发送数据
+//日期传给后台
 $("#middle").find("input.timepicker-input").change(function(){
 		nameDate();
-//	$("#input").focus(function(){  
-//		$(this).attr("data-oval",$(this).val()); //将当前值存入自定义属性  
-//		}).blur(function(){  
-//			var oldVal=($(this).attr("data-oval")); //获取原值  
-//			var newVal=($(this).val()); //获取当前值  
-//			if (oldVal!=newVal){
-//				
-//			}
-//		})
 })
+
 function nameDate(){
 	var myChart1 = echarts.init(document.getElementById('chartmain'));
-	var endTime = $("#startTime").val();
 	var assignee = $("#input").val();
-	if(endTime!=''&&assignee!=''){
+	var arr = assignee.split("、").join(',');
+	var str = arr.substring(0,arr.length);
+	var startTime =$("#startTime").val();
+	var endTime = $("#endTime").val();
+	if(startTime!=''&&endTime!=''&&assignee!=''){
 					$.ajax({
 							type:"post",
-							url:"http://120.78.67.238:8080/person/efficiency",
+							url:"http://120.78.67.238:8080/person/compare",
 							async:true,
 							data:{
-								assignee:assignee,
+								assignee:str,
+								startTime:startTime,
 								endTime:endTime
 							},
 							dataType:'json',
 							success:function(data){
 									myChart1.setOption({        //加载数据图表
 									        xAxis: {
-									                data: data.data['week']
-										            },
+									                data: data.data['assignee']
+									                },
 									                series: [{
 									                    data: data.data['efficiency'],
 									                    markLine:{
@@ -210,8 +177,7 @@ function nameDate(){
 									                    	}]
 									                    },// 根据名字对应到相应的系列
 									                }],
-									                
-									})
+									});
 							},
 							error : function(errorMsg) {  
 							       alert("图表请求数据失败!");

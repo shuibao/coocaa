@@ -4,6 +4,7 @@ import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.vo.Chart2Vo;
 import com.coocaa.demo.vo.RequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/project")
 public class ProjectController {

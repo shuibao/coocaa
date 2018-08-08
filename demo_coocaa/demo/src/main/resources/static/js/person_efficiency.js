@@ -11,7 +11,7 @@ $("#banner").find("p:eq(0)").click(function(){
 	window.location.href = "/index";
 });
 $("#banner").find("p:eq(1)").click(function(){
-	window.location.href = "/person";
+	window.location.href = "/project";
 });
 //侧边栏
 $(function(){
@@ -25,74 +25,58 @@ $(function(){
         }
     });
 })
-//图表
-var myChart1 = echarts.init(document.getElementById('chartmain'));
-			myChart1.setOption(
-				option1 = {
+var myChart2 = echarts.init(document.getElementById('chartmain'));
+			myChart2.setOption(
+				option2 = {
 					title:{
-						text:'工作效率',
-						textStyle:{
-							color:'#000000',
-						},
-						left:'center',
+						text:'人员效率比较',
+						left:"center"
 					},
 					tooltip:{
 						show:true,
-						trigger:'axis',
-						axisPointer:{
-							show:false,
-						}
-					},
-					gird:{
-						left:'3%',
-						right:'15%',
-						bottom:"10%",
-						containLabel:true,
+						trigger:'axis',				
 					},
 					legend:{
-						name:'工作效率',
+						name:'效率',
 						selectedMode:false,
-						right:20,
-						top:10,
+						x:'right',
+						y:'top',
 					},
 					xAxis:[
 						{
-							name:'时间',
+							name:"工作人员",
 							show:true,
 							type:'category',
-							data:[],//'1月','2月','3月','4月','5月'
 							axisLabel:{
-								interval: 0,
-								fontStyle:'italic',
-								fontSize:'13',
-								lineHeight:40,
-							}
-     					}
+								interval:0,
+							},
+							data:[],
+						}
 					],
 					yAxis:[
 						{
-							name:'工作效率',
+							name:"工作效率",
 							type:'value',
 						}
 					],
 					series:[
 						{
-							name:"工作效率",
+							name:"效率",
 							type:'bar',
-							data:[],//2.0, 4.9, 7.0, 23.2, 25.6
-							barMaxWidth:60,
-							itemStyle: {
-							        normal: {
-							            color: new echarts.graphic.LinearGradient(
-							                0, 0, 0, 1,
-							                [
-							                    {offset: 0, color: '#FFCC66'},
-							                    {offset: 0.5, color: '#FFCC33'},
-							                    {offset: 1, color: '#FFCC00'}
-							                ]
-							            )
-							        }
-							   },
+							barMaxWidth:40,
+							data:[],
+							itemStyle:{
+								color:"#ccc",
+							},
+							markLine:{
+								data:[
+									{
+										name:'标准线',
+										yAxis:'',
+									}
+								]
+								
+							},
 							label: {
 							      normal: {
 							          show: true,
@@ -102,34 +86,33 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 							          }
 							      }
 							},
-							markLine:{
-								data:[
-									{
-										name:'标准线',
-										yAxis:'',
-										lineStyle:{
-											color:'rgba(128, 128, 128, 0.5)'
-										},
-									}
-								]
-							},
 						}
 					],
 				}
 			);
-
-
+$('#pro_input').click(function(){
+	$("#ul1").css("display","block");
+	$("input[name='check']").change(function(){
+		var result='';
+        $("input[name='check']:checked").each(function(){    
+            result += $(this).val()+'、';
+	    });
+	    if(result!=""){
+	        result=result.substring(0,result.lastIndexOf('、')); 
+    	}
+	    $("#pro_input").val(result);
+	})
+})
 //模糊搜索
 $(document).ready(function(){
 	$.ajax({
 		type:"get",
-		// url:"http://120.78.67.238:8080/common/assignee",
-        url:"http://120.78.67.238:8080/common/assignee",
+		url:"http://120.78.67.238:8080/common/projectname",
 		async:true,
 		dataType:'json',
 		success:function(data){
 			var temp = [];
-			temp = data.data['assignee'];
+			temp = data.data['projectName'];
 			for(var j=0;j<temp.length;j++){
 				$('#down').append('<li>'+temp[j]+'</li>');
 			}
@@ -137,7 +120,7 @@ $(document).ready(function(){
 				var e = e || window.event; //浏览器兼容性 
 				var elem = e.target || e.srcElement;
 				while (elem) { //循环判断至跟节点，防止点击的是div子元素 
-					if (elem.id && elem.id == 'name') {
+					if (elem.id && elem.id == 'project') {
 						return;
 					}
 					elem = elem.parentNode;
@@ -147,7 +130,7 @@ $(document).ready(function(){
 				$("li").click(function(){
 					$("#input").val($(this).text());
 					$("#down").css("display","none");
-					nameDate();
+					nameValue();
 				});
 				$("#input").click(function(){
 					fun();
@@ -168,38 +151,79 @@ $(document).ready(function(){
 		}
 	})
 })
-
-//向后台发送数据
+function nameValue(){
+			var projectName = $("#input").val();
+			$.ajax({
+				type:"get",
+				url:" http://120.78.67.238:8080/common/assignee",
+				async:true,
+				data:{
+					projectName:projectName,
+				},
+				dataType:'json',
+				success:function(result){
+					var name = [];
+					name = result.data['assignee'];
+					$("#ul1").empty();
+					for(var j=0;j<name.length;j++){
+						$('#ul1').append("<li><input type='checkbox' name='check' value='"+name[j]+"'>"+name[j]+"</li>");
+					}
+					$(document).bind('click', function(e) {
+						var e = e || window.event; //浏览器兼容性 
+						var elem = e.target || e.srcElement;
+						while (elem) { //循环判断至跟节点，防止点击的是div子元素 
+							if (elem.id && elem.id == 'name') {
+								return;
+							}
+							elem = elem.parentNode;
+						}
+						$('#ul1').css('display', 'none'); //点击的不是div或其子元素 
+					});
+						$('#pro_input').click(function(){
+							$("#ul1").css("display","block");
+							$("input[name='check']").change(function(){
+								var val='';
+						        $("input[name='check']:checked").each(function(){    
+						            val += $(this).val()+'、';
+							    });
+							    if(val!=""){
+							        val=val.substring(0,val.lastIndexOf('、')); 
+						    	}
+							    $("#pro_input").val(val);
+							    nameDate();
+							})
+						})
+						
+				}
+			});
+}
 $("#middle").find("input.timepicker-input").change(function(){
 		nameDate();
-//	$("#input").focus(function(){  
-//		$(this).attr("data-oval",$(this).val()); //将当前值存入自定义属性  
-//		}).blur(function(){  
-//			var oldVal=($(this).attr("data-oval")); //获取原值  
-//			var newVal=($(this).val()); //获取当前值  
-//			if (oldVal!=newVal){
-//				
-//			}
-//		})
 })
 function nameDate(){
 	var myChart1 = echarts.init(document.getElementById('chartmain'));
-	var endTime = $("#startTime").val();
-	var assignee = $("#input").val();
-	if(endTime!=''&&assignee!=''){
+	var projectName = $("#input").val();
+	var assignee = $("#pro_input").val();
+	var arr = assignee.split("、").join(',');
+	var str = arr.substring(0,arr.length);
+	var startTime = $("#startTime").val();
+	var endTime = $("#endTime").val();
+	if(endTime!=''&&assignee!=''&&projectName!=''&&startTime!=''){
 					$.ajax({
 							type:"post",
-							url:"http://120.78.67.238:8080/person/efficiency",
+							url:"http://120.78.67.238:8080/project/memberefficiency",
 							async:true,
 							data:{
-								assignee:assignee,
+								projectName:projectName,
+								assignee:str,
+								startTime:startTime,
 								endTime:endTime
 							},
 							dataType:'json',
 							success:function(data){
 									myChart1.setOption({        //加载数据图表
 									        xAxis: {
-									                data: data.data['week']
+									                data: data.data['assignee']
 										            },
 									                series: [{
 									                    data: data.data['efficiency'],

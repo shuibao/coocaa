@@ -98,7 +98,7 @@ public class IssueServiceImplTest {
         projectName.add("ARCH-酷开架构设计");
         projectName.add("TEST-测试项目");
         requestVo.setProjectName(projectName);
-        Date startTime=sdf.parse("2018-01-06");
+        Date startTime=sdf.parse("2018-02-06");
         Date endTime=sdf.parse("2018-08-06");
         requestVo.setStartTime(startTime);
         requestVo.setEndTime(endTime);

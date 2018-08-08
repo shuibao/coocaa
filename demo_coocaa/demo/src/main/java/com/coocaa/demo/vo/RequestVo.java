@@ -9,6 +9,7 @@ import java.util.List;
  * 前端请求封装的类
  */
 public class RequestVo {
+
     private List<String> assignee;
     private List<String> projectName;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

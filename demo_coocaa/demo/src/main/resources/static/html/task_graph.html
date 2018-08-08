@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="/css/common.css" />
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap-datetimepicker.min.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="/css/task_graph.css"/>
+		<script src="/js/jQuery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+	</head>
+	<body>
+		<div id="nav">
+			<div class="img">
+				<img src="/img/open.png" width="20px" height="20px"/>
+			</div>
+			<li>
+				<img src="/img/home.png" width="60px" height="60px"/>
+				<p>首页</p>
+			</li>
+			<li>
+				<img src="/img/people.png" width="60px" height="60px" />
+				<p>职员角度</p>
+			</li>
+			<li>
+				<img src="/img/project.png" width="60px" height="60px" />
+				<p>工作角度</p>
+			</li>
+		</div>
+		<div id="aside">
+			<div id="banner">
+				<p>首页</p>
+				<img src="/img/arrows.png" width="10px" height="10px" />
+				<p>人员角度</p>
+				<img src="/img/arrows.png" width="10px" height="10px" />
+				<p>工作效率</p>
+			</div>
+			<div id="middle">
+				<div id="topic">
+					<p>报告：工作效率</p>
+					<p>描述：显示经办人在负责的每个项目中的工作效率，查看该员工近期的工作状况</p>
+				</div>
+				<div id="choose">
+					<div id="name">
+						<p>经办人：</p>
+						<input type='text' id="input" value="" placeholder="请选择"  onBlur=" " onFocus=" "/>
+					    <ul id="down">
+					    </ul>
+					</div>
+					<div id="time">
+						<p>时间：<input class="input timepicker-input" type="text" value="" id="startTime"  readonly/>~
+						<input class="input timepicker-input" value=""  type="text"  id="endTime"   readonly/>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+			<div id="chart">
+					<div id="chartmain" style="width:800px; height: 500px;"></div>
+			</div>r
+		
+		
+		<script src="/js/echarts.min.js"></script>
+		<script src="/js/task_graph.js"></script>
+		<script>
+			$(".timepicker-input").each(function () {
+				
+			}).datetimepicker({
+				language:  'zh-CN',
+				timepicker:false, 
+				weekStart: 1,
+				todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 2,
+				forceParse: 0,
+				bootcssVer:3,
+				showMeridian: 1,//等于0时，表示显示时，分；1表示显示时；2表示显示日；3表示显示到月
+			    minView: "month",//设置只显示到月份
+			    format : "yyyy-mm-dd",//日期格式
+			    autoclose:true,//选中关闭
+			    todayBtn: true
+			
+			});
+		</script>
+	</body>
+</html>

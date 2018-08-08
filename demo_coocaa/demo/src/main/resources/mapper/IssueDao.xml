@@ -57,7 +57,7 @@
             </if>
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
-        group by new_created
+        group by new_created asc
     </select>
     <select id="queryUnfixedTime" resultType="com.coocaa.demo.vo.IssueVo">
         select
@@ -140,7 +140,7 @@
             and resolution = #{resolution}
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
-        group by assignee asc
+        group by assignee,project_name,resolution,created asc
     </select>
     <select id="queryProjectEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
         select project_name , sum(story_point) as story_point ,sum(all_time_spent) as all_time_spent

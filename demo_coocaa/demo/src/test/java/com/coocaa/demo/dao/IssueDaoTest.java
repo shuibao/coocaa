@@ -44,7 +44,7 @@ public class IssueDaoTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         assignee.add("zhaolei01");
         requestVo.setAssignee(assignee);
-        Date startTime = sdf.parse("2018-03-09");
+        Date startTime = sdf.parse("2018-01-09");
         Date endTime = sdf.parse("2018-04-06");
         requestVo.setStartTime(startTime);
         requestVo.setEndTime(endTime);
@@ -166,7 +166,7 @@ public class IssueDaoTest {
     public void queryPersonStoryTest() throws ParseException {
         RequestVo requestVo = new RequestVo();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startTime = sdf.parse("2018-01-06");
+        Date startTime = sdf.parse("2017-01-06");
         Date endTime = sdf.parse("2018-08-06");
         requestVo.setStartTime(startTime);
         requestVo.setEndTime(endTime);

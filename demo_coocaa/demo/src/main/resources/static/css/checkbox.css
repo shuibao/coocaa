@@ -1,0 +1,50 @@
+#input{
+	width:150px;
+	height: 30px;
+	position: relative;
+	text-overflow: ellipsis;
+}
+#ul1{
+	width:180px;
+	height: 150px;
+	overflow-y: scroll;
+	position: absolute;
+	left: 0;
+	top: 30px;
+	border:1px #999999 solid;
+	display: none;
+}
+#ul1 li{
+	height: 30px;
+	line-height: 30px;
+	font-size:15px ;
+	border-bottom: 1px #ccc dotted;
+}
+#ul1 li input{
+	margin:0px 10px;
+}
+#name{
+	display: flex;
+	justify-content: flex-start;
+	margin-left: 20px;
+}
+#name input{
+	width:180px;
+	height: 30px;
+	margin: 0 auto;
+}
+#down{
+	width:180px;
+	height: 200px;
+	position: absolute;
+	left: 60px;
+	top:20px ;
+	border: 1px #999 solid;
+	background-color: #FFFFFF;
+	overflow-y: scroll;
+	display: none;
+	z-index: 2;
+}
+#down li{
+	border-bottom: 1px #ccc dotted;
+}

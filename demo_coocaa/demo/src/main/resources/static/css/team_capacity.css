@@ -1,0 +1,109 @@
+#nav{
+	width: 100px;
+	height: 100%;
+	padding-top: 100px;
+	background-color:rgba(135,206,250,0.7);
+	position: fixed;
+	z-index: 2;
+	left: -70px;
+	top: 0;
+}
+.img{
+	position: absolute;
+	right: 5px;
+	top: 10px;
+}
+#nav li{
+	width: 60px;
+	height: 80px;
+	margin-left:10px;
+	margin-bottom: 30px;
+	
+}
+#nav li p{
+	font-size: 14px;
+	color:#FFFFFF;
+	text-align: center;
+	line-height: 30px;
+}
+#aside{
+	width:100%;
+	padding-left:30px;
+	background-color: 	#F5F5F5;
+}
+#banner{
+	height: 60px;
+	overflow: hidden;
+	border-bottom: 1px #999 solid;
+}
+#banner p{
+	font-size: 18px;
+	color:  	#696969;
+	line-height: 60px;
+	float: left;
+	margin: 0 20px;
+}
+#banner img{
+	float: left;
+	margin-top: 25px;
+}
+#middle{
+	font-size: 15px;
+	height: 90px;
+	border-bottom: 1px #999 solid;
+}
+#topic{
+	margin: 10px 20px;
+	line-height: 20px;
+}
+#choose{
+	font-size: 15px;
+	line-height: 30px;
+	display: flex;
+	justify-content: flex-start;
+}
+#name{
+	display: flex;
+	justify-content: flex-start;
+	margin-left: 20px;
+	position: relative;
+}
+#pro_input{
+	width:180px;
+	height: 30px;
+	margin: 0 auto;
+	text-overflow: ellipsis;
+}
+#ul1{
+	width:180px;
+	height: 200px;
+	overflow-y: scroll;
+	position: absolute;
+	left: 45px;
+	top: 30px;
+	border:1px #999999 solid;
+	display: none;
+	z-index: 2;
+	
+}
+#ul1 li{
+	height: 30px;
+	line-height: 30px;
+	overflow:hidden;
+	font-size:15px ;
+	border-bottom: 1px #ccc dotted;
+}
+#ul1 li input{
+	margin:0px 5px;
+}
+#time{
+	margin-left: 20px;	
+}
+#time input{
+	width:180px;
+	height: 30px;
+}
+#chartmain{
+	background-color:'#FFFFCC';
+	margin: 50px auto;
+}

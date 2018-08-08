@@ -1,0 +1,106 @@
+#nav{
+	width: 100px;
+	height: 100%;
+	padding-top: 100px;
+	background-color:rgba(135,206,250,0.7);
+	position: fixed;
+	z-index: 2;
+	left: -70px;
+	top: 0;
+}
+.img{
+	position: absolute;
+	right: 5px;
+	top: 10px;
+}
+#nav li{
+	width: 60px;
+	height: 80px;
+	margin-left:10px;
+	margin-bottom: 30px;
+	
+}
+#nav li p{
+	font-size: 14px;
+	color:#FFFFFF;
+	text-align: center;
+	line-height: 30px;
+}
+#aside{
+	width:100%;
+	height: 60px;
+	padding-left:30px;
+	background-color: 	#F5F5F5;
+}
+#banner{
+	height: 60px;
+	overflow: hidden;
+	border-bottom: 1px #999 solid;
+}
+#banner p{
+	font-size: 18px;
+	color:  	#696969;
+	line-height: 60px;
+	float: left;
+	margin: 0 20px;
+}
+#banner img{
+	float: left;
+	margin-top: 25px;
+}
+#person{
+	width:100%;
+	margin-left: 100px;
+}
+#person_1{
+	width:75px;
+	height: 100px;
+}
+#person_1 p{
+	font-size: 15px;
+	text-align: center;
+	line-height: 20px;
+}
+#person_all{
+	width: 100%;
+	height: 210px;
+	display: flex;
+	justify-content:flex-start ;
+}
+#one,#two,#three,#four{
+	width:170px;
+	height: 210px;
+	font-size: 15px;
+	text-align: center;
+	line-height: 40px;
+	margin-left: 100px;
+	
+}
+#one img,#two img,#three img,#four img{
+	border: 4px #002A80 double;
+	padding: 10px;
+	border-radius: 5%;
+}
+#people_1{
+	width:75px;
+	height: 100px;
+}
+#people_1 p{
+	font-size: 15px;
+	text-align: center;
+	line-height: 20px;
+}
+#people_all{
+	width:170px;
+	height: 210px;
+	font-size: 15px;
+	text-align: center;
+	line-height: 40px;
+	margin-left: 100px;
+}
+#people_all img{
+	border: 4px #002A80 double;
+	padding: 10px;
+	border-radius: 5%;
+}
+ 

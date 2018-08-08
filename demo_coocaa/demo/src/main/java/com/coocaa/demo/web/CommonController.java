@@ -2,17 +2,19 @@ package com.coocaa.demo.web;
 
 import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.service.ProductService;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/common")
 public class CommonController {
@@ -22,9 +24,11 @@ public class CommonController {
     private ProductService productService;
 
     @RequestMapping("/demo")
-    public ModelAndView test(){
+    public ModelAndView test(HttpServletRequest request){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("efficiency");
+        mv.setViewName("index");
+        String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
+        mv.getModel().put("url",basePath);
         return mv;
     }
 
