@@ -2,6 +2,7 @@ package com.coocaa.demo.web;
 
 import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.service.ProductService;
+import com.coocaa.demo.util.NameUtil;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,14 +24,14 @@ public class CommonController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping("/demo")
-    public ModelAndView test(HttpServletRequest request){
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("index");
-        String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
-        mv.getModel().put("url",basePath);
-        return mv;
+    @RequestMapping(value = "/test",method = RequestMethod.GET)
+    private String testNameMap(){
+//        NameUtil name =new NameUtil();
+//        name.insertMap();
+       // Map<String,String> nameMap = new NameUtil().getNameMap();
+        return NameUtil.nameMap.get("zhaolei01");
     }
+
 
     @RequestMapping(value = "/assignee",method = RequestMethod.GET)
     private Map<String,Object>getIssueAssignee(HttpServletResponse response,String projectName){

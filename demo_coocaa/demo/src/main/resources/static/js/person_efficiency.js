@@ -107,7 +107,7 @@ $('#pro_input').click(function(){
 $(document).ready(function(){
 	$.ajax({
 		type:"get",
-		url:"http://120.78.67.238:8080/common/projectname",
+		url:"http://localhost:8080/common/projectname",
 		async:true,
 		dataType:'json',
 		success:function(data){
@@ -155,7 +155,7 @@ function nameValue(){
 			var projectName = $("#input").val();
 			$.ajax({
 				type:"get",
-				url:" http://120.78.67.238:8080/common/assignee",
+				url:" http://localhost:8080/common/assignee",
 				async:true,
 				data:{
 					projectName:projectName,
@@ -211,7 +211,7 @@ function nameDate(){
 	if(endTime!=''&&assignee!=''&&projectName!=''&&startTime!=''){
 					$.ajax({
 							type:"post",
-							url:"http://120.78.67.238:8080/project/memberefficiency",
+							url:"http://localhost:8080/project/memberefficiency",
 							async:true,
 							data:{
 								projectName:projectName,

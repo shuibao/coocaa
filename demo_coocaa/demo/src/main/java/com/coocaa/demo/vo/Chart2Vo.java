@@ -5,17 +5,17 @@ import java.util.List;
 public class Chart2Vo {
     private String projectName;
     private List<String> issueKey;
-    private List<Integer> allOriginalEstimate;
-    private List<Integer> allTimeSpent;
-    private int resolution;
+    private List<Integer> originalEstimate;
+    private List<Integer> timeSpent;
+    private int status;
     private int sumOriginal;
 
-    public int getResolution() {
-        return resolution;
+    public int getStatus() {
+        return status;
     }
 
-    public void setResolution(int resolution) {
-        this.resolution = resolution;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     private int sumSpent;
@@ -36,20 +36,20 @@ public class Chart2Vo {
         this.issueKey = issueKey;
     }
 
-    public List<Integer> getAllOriginalEstimate() {
-        return allOriginalEstimate;
+    public List<Integer> getOriginalEstimate() {
+        return originalEstimate;
     }
 
-    public void setAllOriginalEstimate(List<Integer> allOriginalEstimate) {
-        this.allOriginalEstimate = allOriginalEstimate;
+    public void setOriginalEstimate(List<Integer> originalEstimate) {
+        this.originalEstimate = originalEstimate;
     }
 
-    public List<Integer> getAllTimeSpent() {
-        return allTimeSpent;
+    public List<Integer> getTimeSpent() {
+        return timeSpent;
     }
 
-    public void setAllTimeSpent(List<Integer> allTimeSpent) {
-        this.allTimeSpent = allTimeSpent;
+    public void setTimeSpent(List<Integer> timeSpent) {
+        this.timeSpent = timeSpent;
     }
 
     public int getSumOriginal() {

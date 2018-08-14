@@ -78,13 +78,13 @@ public interface IssueDao {
      * 使用：图表七（人员工作量-单项目）
      * 描述：根据选择的项目名称，返回该项目所有人员各自的工作量情况
      * @param requestVo
-     * @param resolution 1：已解决 0：未解决
+     * @param status 1：已解决 0：未解决
      * @return
      */
-    List<IssueVo> queryPersonStory(@Param("RequestVo")RequestVo requestVo,@Param("resolution") int resolution);
+    List<IssueVo> queryPersonStory(@Param("RequestVo")RequestVo requestVo,@Param("status") int status);
 
     /**
-     * 使用：图表九（团队效率比较-多项目）
+     * 使用：图表九、十（团队效率比较-多项目）（团队产能比较-多项目）
      * 描述：返回选择的每个项目的总工作量及总耗费时间
      * @param requestVo
      * @return
@@ -92,7 +92,10 @@ public interface IssueDao {
     List<IssueVo> queryProjectEfficiency(@Param("RequestVo")RequestVo requestVo);
 
     /**
-     *
+     * 使用：图表八（人员效率比较）
+     * 描述：选择项目，及改项目对应的多个经办人，返回他们的工作量及工作时间
+     * @param requestVo
+     * @return
      */
     List<IssueVo> queryMemberEfficiency(@Param("RequestVo")RequestVo requestVo);
 }

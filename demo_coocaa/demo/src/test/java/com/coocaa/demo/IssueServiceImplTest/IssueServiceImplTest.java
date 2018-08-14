@@ -19,6 +19,11 @@ import java.util.*;
 public class IssueServiceImplTest {
     @Autowired
     private IssueService issueService;
+    @Test
+    public void NameTest(){
+        List<String> res = issueService.getIssueAssignee(null);
+        System.out.println(res.size());
+    }
 
     @Test
     public void queryIssueAssigneeEfficiencyTest() throws ParseException {
@@ -96,10 +101,10 @@ public class IssueServiceImplTest {
         requestVo.setAssignee(assignee);
         List<String> projectName = new ArrayList<>();
         projectName.add("ARCH-酷开架构设计");
-        projectName.add("TEST-测试项目");
+       // projectName.add("TEST-测试项目");
         requestVo.setProjectName(projectName);
-        Date startTime=sdf.parse("2018-02-06");
-        Date endTime=sdf.parse("2018-08-06");
+        Date startTime=sdf.parse("2018-01-14");
+        Date endTime=sdf.parse("2018-01-20");
         requestVo.setStartTime(startTime);
         requestVo.setEndTime(endTime);
         List<Chart2Vo>res = new ArrayList<>();

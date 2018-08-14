@@ -5,24 +5,15 @@ import java.util.Date;
 public class IssueVo {
 
     private int issueId;
-    private int resolution;
+    private int status;
     private String assignee;
     private String issueKey;
     private Date newCreated;
-    private int allOriginalEstimate;
-    private int allRemainingEstimate;
-    private int allTimeSpent;
-    private String sprint;
+    private int originalEstimate;
+    private int remainingEstimate;
+    private int timeSpent;
     private int storyPoint;
     private String projectName;
-
-    public String getIssueKey() {
-        return issueKey;
-    }
-
-    public void setIssueKey(String issueKey) {
-        this.issueKey = issueKey;
-    }
 
     public int getIssueId() {
         return issueId;
@@ -32,12 +23,12 @@ public class IssueVo {
         this.issueId = issueId;
     }
 
-    public int getResolution() {
-        return resolution;
+    public int getStatus() {
+        return status;
     }
 
-    public void setResolution(int resolution) {
-        this.resolution = resolution;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getAssignee() {
@@ -48,52 +39,44 @@ public class IssueVo {
         this.assignee = assignee;
     }
 
-    public Date getnewCreated() {
+    public String getIssueKey() {
+        return issueKey;
+    }
+
+    public void setIssueKey(String issueKey) {
+        this.issueKey = issueKey;
+    }
+
+    public Date getNewCreated() {
         return newCreated;
     }
 
-    public void setnewCreated(Date newCreated) {
+    public void setNewCreated(Date newCreated) {
         this.newCreated = newCreated;
     }
 
-    public int getAllOriginalEstimate() {
-        return allOriginalEstimate;
+    public int getOriginalEstimate() {
+        return originalEstimate;
     }
 
-    public void setAllOriginalEstimate(int allOriginalEstimate) {
-        this.allOriginalEstimate = allOriginalEstimate;
+    public void setOriginalEstimate(int originalEstimate) {
+        this.originalEstimate = originalEstimate;
     }
 
-    public int getAllRemainingEstimate() {
-        return allRemainingEstimate;
+    public int getRemainingEstimate() {
+        return remainingEstimate;
     }
 
-    public void setAllRemainingEstimate(int allRemainingEstimate) {
-        this.allRemainingEstimate = allRemainingEstimate;
+    public void setRemainingEstimate(int remainingEstimate) {
+        this.remainingEstimate = remainingEstimate;
     }
 
-    public int getAllTimeSpent() {
-        return allTimeSpent;
+    public int getTimeSpent() {
+        return timeSpent;
     }
 
-    public void setAllTimeSpent(int allTimeSpent) {
-        this.allTimeSpent = allTimeSpent;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(String sprint) {
-        this.sprint = sprint;
+    public void setTimeSpent(int timeSpent) {
+        this.timeSpent = timeSpent;
     }
 
     public int getStoryPoint() {
@@ -102,5 +85,13 @@ public class IssueVo {
 
     public void setStoryPoint(int storyPoint) {
         this.storyPoint = storyPoint;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 }

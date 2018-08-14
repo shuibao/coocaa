@@ -123,8 +123,8 @@ var myChart1 = echarts.init(document.getElementById('chartmain'));
 $(document).ready(function(){
 	$.ajax({
 		type:"get",
-		// url:"http://120.78.67.238:8080/common/assignee",
-        url:"http://120.78.67.238:8080/common/assignee",
+		// url:"http://localhost:8080/common/assignee",
+        url:"http://localhost:8080/common/assignee",
 		async:true,
 		dataType:'json',
 		success:function(data){
@@ -189,7 +189,7 @@ function nameDate(){
 	if(endTime!=''&&assignee!=''){
 					$.ajax({
 							type:"post",
-							url:"http://120.78.67.238:8080/person/efficiency",
+							url:"http://localhost:8080/person/efficiency",
 							async:true,
 							data:{
 								assignee:assignee,

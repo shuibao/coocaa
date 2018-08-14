@@ -29,7 +29,7 @@
     </select>
     <select id="queryWeekEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
         select
-        assignee,project_name,resolution,issue_key,DATE_FORMAT(created,'%Y-%m-%d') AS new_created,story_point, all_time_spent
+        assignee,project_name,status,issue_key,DATE_FORMAT(created,'%Y-%m-%d') AS new_created,story_point, time_spent
         from tb_issue
         <where>
             <if test="RequestVo.getAssignee().size()==1">
@@ -39,7 +39,7 @@
                 </foreach>
             </if>
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
-            and resolution = 1
+            and status = 1
         </where>
 
     </select>
@@ -61,7 +61,7 @@
     </select>
     <select id="queryUnfixedTime" resultType="com.coocaa.demo.vo.IssueVo">
         select
-        assignee,issue_key,all_original_estimate,all_remaining_estimate,project_name
+        assignee,issue_key,original_estimate,remaining_estimate,project_name
         from tb_issue
         <where>
             <if test="RequestVo.getAssignee().size()==1">
@@ -70,26 +70,26 @@
                     #{item}
                 </foreach>
             </if>
-            and resolution = 0
+            and status = 0
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
         order by issue_key asc
     </select>
     <select id="queryPersonEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
-        select  assignee,sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+        select  assignee,sum(story_point) as story_point,sum(time_spent) as time_spent
         from  tb_issue
         <where>
             and assignee in
             <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            and resolution = 1
+            and status = 1
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
         group by assignee
     </select>
     <select id="queryIssueTime" resultType="com.coocaa.demo.vo.IssueVo">
-        select assignee,resolution,project_name,issue_key,all_original_estimate,all_time_spent
+        select assignee,status,project_name,issue_key,original_estimate,time_spent
         from tb_issue
         <where>
             and assignee in
@@ -117,10 +117,10 @@
         <!--group by sprint-->
     <!--</select>-->
     <!--<select id="querySprintEfficiency" resultType="com.coocaa.demo.vo.IssueVo">-->
-        <!--select sprint, sum(story_point) as story_point,sum(all_time_spent) as all_time_spent-->
+        <!--select sprint, sum(story_point) as story_point,sum(time_spent) as time_spent-->
         <!--from tb_issue-->
         <!--<where>-->
-            <!--and resolution = 1-->
+            <!--and status = 1-->
             <!--and project_name in-->
             <!--<foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">-->
                 <!--#{item}-->
@@ -130,33 +130,33 @@
         <!--group by sprint-->
     <!--</select>-->
     <select id="queryPersonStory" resultType="com.coocaa.demo.vo.IssueVo">
-        select assignee,project_name,resolution,created,sum(story_point) as story_point
+        select assignee,project_name,status,created,sum(story_point) as story_point
         from tb_issue
         <where>
             and project_name in
             <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            and resolution = #{resolution}
+            and status = #{status}
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
-        group by assignee,project_name,resolution,created asc
+        group by assignee asc
     </select>
     <select id="queryProjectEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
-        select project_name , sum(story_point) as story_point ,sum(all_time_spent) as all_time_spent
+        select project_name , sum(story_point) as story_point ,sum(time_spent) as time_spent
         from tb_issue
         <where>
             and project_name in
             <foreach collection="RequestVo.projectName" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            and resolution = 1
+            and status = 1
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
         group by project_name
     </select>
     <select id="queryMemberEfficiency" resultType="com.coocaa.demo.vo.IssueVo">
-        select  project_name ,assignee,sum(story_point) as story_point,sum(all_time_spent) as all_time_spent
+        select  project_name ,assignee,sum(story_point) as story_point,sum(time_spent) as time_spent
         from  tb_issue
         <where>
             and project_name in
@@ -167,7 +167,7 @@
             <foreach collection="RequestVo.assignee" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            and resolution = 1
+            and status = 1
             and created between #{RequestVo.startTime} and #{RequestVo.endTime}
         </where>
         group by assignee

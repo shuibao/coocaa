@@ -128,7 +128,7 @@ var myChart1 = echarts.init(document.getElementById('chartmain1'));
 $(document).ready(function(){
 	$.ajax({
 		type:"get",
-		url:'http://120.78.67.238:8080/common/assignee',
+		url:'http://localhost:8080/common/assignee',
 		async:true,
 		dataType:'json',
 		success:function(data){
@@ -138,15 +138,15 @@ $(document).ready(function(){
 				$('#down').append('<li>'+temp[j]+'</li>');
 			}
 			$(document).bind('click', function(e) {
-				var e = e || window.event; //浏览器兼容性 
+				var e = e || window.event; //浏览器兼容性
 				var elem = e.target || e.srcElement;
-				while (elem) { //循环判断至跟节点，防止点击的是div子元素 
+				while (elem) { //循环判断至跟节点，防止点击的是div子元素
 					if (elem.id && elem.id == 'name') {
 						return;
 					}
 					elem = elem.parentNode;
 				}
-				$('#down').css('display', 'none'); //点击的不是div或其子元素 
+				$('#down').css('display', 'none'); //点击的不是div或其子元素
 			});
 				$("#down").find("li").click(function(){
 					$("#input").val($(this).text());
@@ -171,14 +171,14 @@ $(document).ready(function(){
 						}
 				}
 		}
-		
+
 	});
 })
 function project(){
 			var assignee = $("#input").val();
 			$.ajax({
 				type:"get",
-				url:" http://120.78.67.238:8080/common/projectname",
+				url:" http://localhost:8080/common/projectname",
 				async:true,
 				data:{
 					assignee:assignee,
@@ -192,15 +192,15 @@ function project(){
 						$('#ul1').append("<li>"+pro[j]+"</li>");
 					}
 					$(document).bind('click', function(e) {
-						var e = e || window.event; //浏览器兼容性 
+						var e = e || window.event; //浏览器兼容性
 						var elem = e.target || e.srcElement;
-						while (elem) { //循环判断至跟节点，防止点击的是div子元素 
+						while (elem) { //循环判断至跟节点，防止点击的是div子元素
 							if (elem.id && elem.id == 'project') {
 								return;
 							}
 							elem = elem.parentNode;
 						}
-						$('#ul1').css('display', 'none'); //点击的不是div或其子元素 
+						$('#ul1').css('display', 'none'); //点击的不是div或其子元素
 					});
 						$("#ul1").find("li").click(function(){
 							$("#pro_input").val($(this).text());
@@ -215,7 +215,7 @@ function project(){
 							$("#ul1").css("display","block");
 							$("#ul1").find("li").show();
 						});
-						
+
 				}
 			});
 }
@@ -263,7 +263,7 @@ function nameDate(){
 	if(startTime!=''&&endTime!=''&&assignee!=''&&projectName!=''){
 					$.ajax({
 							type:"post",
-							url:'http://120.78.67.238:8080/person/issuetime',
+							url:'http://localhost:8080/person/issuetime',
 							async:true,
 							data:{
 								assignee:assignee,
@@ -289,10 +289,10 @@ function nameDate(){
 										                },
 										                series: [
 										                	{
-										                    	data: a[i].allOriginalEstimate,
+										                    	data: a[i].originalEstimate,
 										                	},
 										                	{
-										                		data:a[i].allTimeSpent,
+										                		data:a[i].timeSpent,
 										                	}
 										                ],
 										});
@@ -303,7 +303,7 @@ function nameDate(){
 														},
 										                series: [
 											                {
-											                    data: a[i].allOriginalEstimate,
+											                    data: a[i].originalEstimate,
 											                },
 										                ],
 										});

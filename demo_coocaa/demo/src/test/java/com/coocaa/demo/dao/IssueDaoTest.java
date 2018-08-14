@@ -66,7 +66,7 @@ public class IssueDaoTest {
         requestVo.setEndTime(endTime);
         List<IssueVo> res = new ArrayList<>();
         res = issueDao.queryTimeStory(requestVo);
-        String date = sdf.format(res.get(14).getnewCreated());
+        String date = sdf.format(res.get(14).getNewCreated());
         System.out.println(date);
 
     }
@@ -121,7 +121,7 @@ public class IssueDaoTest {
         requestVo.setEndTime(endTime);
         List<String> projectNameList = new ArrayList<>();
         projectNameList.add("ARCH-酷开架构设计");
-        projectNameList.add("TEST-测试项目");
+     //   projectNameList.add("TEST-测试项目");
         requestVo.setProjectName(projectNameList);
         List<IssueVo> res = new ArrayList<>();
         res = issueDao.queryIssueTime(requestVo);
@@ -171,7 +171,7 @@ public class IssueDaoTest {
         requestVo.setStartTime(startTime);
         requestVo.setEndTime(endTime);
         List<String> projectNameList = new ArrayList<>();
-        projectNameList.add("ARCH-酷开架构设计");
+        projectNameList.add("数字酷开");
         requestVo.setProjectName(projectNameList);
         List<IssueVo> res_1 = new ArrayList<>();
         List<IssueVo> res_0 = new ArrayList<>();

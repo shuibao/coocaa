@@ -79,7 +79,7 @@ var myChart = echarts.init(document.getElementById('chartmain'));
 $(document).ready(function(){
 	$.ajax({
 		type:"get",
-		url:"http://120.78.67.238:8080/common/projectname",
+		url:"http://localhost:8080/common/projectname",
 		async:true,
 		dataType:'json',
 		success:function(data){
@@ -130,7 +130,7 @@ function nameDate(){
 	if(startTime!=''&&endTime!=''&&projectName!=''){
 					$.ajax({
 							type:"post",
-							url:"http://120.78.67.238:8080/project/efficiency",
+							url:"http://localhost:8080/project/efficiency",
 							async:true,
 							data:{
 								projectName:str,

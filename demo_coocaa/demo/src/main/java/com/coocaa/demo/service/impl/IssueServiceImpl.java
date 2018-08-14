@@ -3,6 +3,8 @@ package com.coocaa.demo.service.impl;
 import com.coocaa.demo.dao.IssueDao;
 import com.coocaa.demo.service.IssueService;
 import com.coocaa.demo.util.MathUtil;
+import com.coocaa.demo.util.NameUtil;
+import com.coocaa.demo.util.TimeUtil;
 import com.coocaa.demo.vo.Chart2Vo;
 import com.coocaa.demo.vo.IssueVo;
 import com.coocaa.demo.vo.RequestVo;
@@ -26,10 +28,27 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     public List<String> getIssueAssignee(String projectName) {
-        return issueDao.queryIssueAssignee(projectName);
+        List<String> EName = issueDao.queryIssueAssignee(projectName);
+        List<String> CName =new ArrayList<>();
+
+        for (int i = 0; i < EName.size(); i++) {
+            if(NameUtil.nameMap.containsKey(EName.get(i))){
+                CName.add(NameUtil.nameMap.get(EName.get(i)));
+            }else{
+                CName.add(EName.get(i));
+            }
+        }
+        return CName;
     }
     @Override
     public List<String> getProductNameByAssignee(String assignee) {
+        if(NameUtil.nameMap.containsValue(assignee)){
+            for (String getKey:NameUtil.nameMap.keySet()){
+                if(NameUtil.nameMap.get(getKey).equals(assignee)){
+                    return  issueDao.queryProductByAssignee(getKey);
+                }
+            }
+        }
         return issueDao.queryProductByAssignee(assignee);
     }
     @Override
@@ -49,7 +68,7 @@ public class IssueServiceImpl implements IssueService {
         //数据库查询时间的开始时间为第一周的时间
         requestVo.setStartTime(firstWeek);
         //从数据库查询数据
-        issueVoList=issueDao.queryWeekEfficiency(requestVo);
+        issueVoList=issueDao.queryWeekEfficiency(new NameUtil().CtoEName(requestVo));
         //存每周的总耗费时间，有四周，所以长度为4 0对应第一周，1第二周，2第三周，3第四周数据
         int[]timeArray = new int[4];
         //存每周的总工作量，同上
@@ -59,17 +78,17 @@ public class IssueServiceImpl implements IssueService {
         //将数据库查询出来的每条数据中的耗费时间以及工作量
         //先判断每条数据中的创建时间在四周的哪一周范围内，再把累加
         for(int i = 0;i < issueVoList.size(); i++){
-            if (issueVoList.get(i).getnewCreated().before(secondWeek)){
-                timeArray[0]+=issueVoList.get(i).getAllTimeSpent();
+            if (issueVoList.get(i).getNewCreated().before(secondWeek)){
+                timeArray[0]+=issueVoList.get(i).getTimeSpent();
                 storyArray[0]+=issueVoList.get(i).getStoryPoint();
-            }else if(issueVoList.get(i).getnewCreated().before(thirdWeek)){
-                timeArray[1]+=issueVoList.get(i).getAllTimeSpent();
+            }else if(issueVoList.get(i).getNewCreated().before(thirdWeek)){
+                timeArray[1]+=issueVoList.get(i).getTimeSpent();
                 storyArray[1]+=issueVoList.get(i).getStoryPoint();
-            }else if(issueVoList.get(i).getnewCreated().before(fourthWeek)){
-                timeArray[2]+=issueVoList.get(i).getAllTimeSpent();
+            }else if(issueVoList.get(i).getNewCreated().before(fourthWeek)){
+                timeArray[2]+=issueVoList.get(i).getTimeSpent();
                 storyArray[2]+=issueVoList.get(i).getStoryPoint();
-            }else if(issueVoList.get(i).getnewCreated().before(requestVo.getEndTime())){
-                timeArray[3]+=issueVoList.get(i).getAllTimeSpent();
+            }else if(issueVoList.get(i).getNewCreated().before(requestVo.getEndTime())){
+                timeArray[3]+=issueVoList.get(i).getTimeSpent();
                 storyArray[3]+=issueVoList.get(i).getStoryPoint();
             }
         }
@@ -105,7 +124,7 @@ public class IssueServiceImpl implements IssueService {
     @Override
     public Map<String, Object> getTimeStory(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
-        issueVoList = issueDao.queryTimeStory(requestVo);
+        issueVoList = issueDao.queryTimeStory(new NameUtil().CtoEName(requestVo));
         //存放每个问题的创建时间
         List<String> createdList = new ArrayList<>();
         //存放每个问题的累加工作量
@@ -113,7 +132,9 @@ public class IssueServiceImpl implements IssueService {
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
         int sumStory = 0;
         for(int i = 0;i < issueVoList.size();i++){
-            createdList.add(sdf.format(issueVoList.get(i).getnewCreated()));
+            //将时间转换为yyyy-MM-dd格式的字符串
+            createdList.add(sdf.format(issueVoList.get(i).getNewCreated()));
+            //工作总量
             sumStory += issueVoList.get(i).getStoryPoint();
             storyList.add(String.valueOf(sumStory));
         }
@@ -126,67 +147,85 @@ public class IssueServiceImpl implements IssueService {
     @Override
     public Map<String, Object> getUnfixedTime(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
-        issueVoList = issueDao.queryUnfixedTime(requestVo);
+        issueVoList = issueDao.queryUnfixedTime(new NameUtil().CtoEName(requestVo));
+        //存问题的key
         ArrayList<String>issueKeyList = new ArrayList<>();
-        ArrayList<String>originaTimelList = new ArrayList<>();
-        ArrayList<String>remainingTimeList = new ArrayList<>();
+        //存预估时间
+        //ArrayList<String>originalTimelList = new ArrayList<>();
+        //存预估时间 eg:1week2hour
+        ArrayList<String>originalDayTimeList = new ArrayList<>();
+        //存剩余时间
+        //ArrayList<String>remainingTimeList = new ArrayList<>();
+        //存剩余时间 eg:1week2hour
+        ArrayList<String>remainingDayTimeList = new ArrayList<>();
         int sumRemainingTime = 0;
         for(int i = 0;i < issueVoList.size();i++){
             issueKeyList.add(issueVoList.get(i).getIssueKey());
-            originaTimelList.add(String.valueOf(issueVoList.get(i).getAllOriginalEstimate()));
-            remainingTimeList.add(String.valueOf(issueVoList.get(i).getAllRemainingEstimate()));
-            sumRemainingTime+=issueVoList.get(i).getAllRemainingEstimate();
+            //originalTimelList.add(String.valueOf(issueVoList.get(i).getOriginalEstimate()));
+            //remainingTimeList.add(String.valueOf(issueVoList.get(i).getRemainingEstimate()));
+            originalDayTimeList.add(TimeUtil.WeekDayHour(issueVoList.get(i).getOriginalEstimate()));
+            remainingDayTimeList.add(TimeUtil.WeekDayHour(issueVoList.get(i).getRemainingEstimate()));
+            sumRemainingTime+=issueVoList.get(i).getRemainingEstimate();
         }
         Map<String,Object> resMap = new HashMap<>();
         resMap.put("issueKey",issueKeyList);
-        resMap.put("allOriginalEstimate",originaTimelList);
-        resMap.put("allRemainingEstimate",remainingTimeList);
-        resMap.put("allRemainingTime",String.valueOf(sumRemainingTime));
+        resMap.put("allOriginalEstimate",originalDayTimeList);
+        resMap.put("allRemainingEstimate",remainingDayTimeList);
+        resMap.put("allRemainingTime",TimeUtil.WeekDayHour(sumRemainingTime));
         return resMap;
     }
 
     @Override
     public Map<String, Object> getPersonEfficiency(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
-        issueVoList = issueDao.queryPersonEfficiency(requestVo);
+        issueVoList = issueDao.queryPersonEfficiency(new NameUtil().CtoEName(requestVo));
         ArrayList<String>assigneeList = new ArrayList<>();
         ArrayList<String>efficiencyList =new ArrayList<>();
         ArrayList<String>storyList = new ArrayList<>();
         //int sumStory = 0,sumTimeSpent = 0;
+        //按效率从高到低排序
         Collections.sort(issueVoList, new Comparator<IssueVo>() {
             @Override
             public int compare(IssueVo o1, IssueVo o2) {
-                return MathUtil.division(o2.getStoryPoint(),o2.getAllTimeSpent()).compareTo(MathUtil.division(o1.getStoryPoint(),o1.getAllTimeSpent()));
+                return MathUtil.division(o2.getStoryPoint(),o2.getTimeSpent()).compareTo(MathUtil.division(o1.getStoryPoint(),o1.getTimeSpent()));
             }
         });
         for (int i = 0; i < issueVoList.size(); i++) {
             assigneeList.add(issueVoList.get(i).getAssignee());
-            efficiencyList.add(MathUtil.division(issueVoList.get(i).getStoryPoint(),issueVoList.get(i).getAllTimeSpent()));
+            //计算效率
+            efficiencyList.add(MathUtil.division(issueVoList.get(i).getStoryPoint(),issueVoList.get(i).getTimeSpent()));
             storyList.add(String.valueOf(issueVoList.get(i).getStoryPoint()));
            // sumStory += issueVoList.get(i).getStoryPoint();
-           // sumTimeSpent += issueVoList.get(i).getAllTimeSpent();
+           // sumTimeSpent += issueVoList.get(i).getTimeSpent();
         }
         //String averageEfficiency = MathUtil.division(sumStory,sumTimeSpent);
         Map<String,Object> resMap = new HashMap<>();
-        resMap.put("assignee",assigneeList);
+        List<String>CNameList = new ArrayList<>();
+        CNameList = new NameUtil().EtoCName(assigneeList);
+        resMap.put("assignee",CNameList);
         resMap.put("efficiency",efficiencyList);
         resMap.put("allStoryPoint",storyList);
         resMap.put("averageEfficiency",averageEfficiency);
         return resMap;
     }
 
+    //该方法原本是多项目的选择，后面需求改为单项目，所以该方法实现逻辑是按多项目经行的
+    //单项目的数据处理不需要写最外层的for循环，也不需要判断对projectName做等值判断
     @Override
     public List<Chart2Vo> getIssueTime(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
-        issueVoList = issueDao.queryIssueTime(requestVo);
+        issueVoList = issueDao.queryIssueTime(new NameUtil().CtoEName(requestVo));
         List<Chart2Vo> chart2List = new ArrayList<>();
+        //按项目来取数据，每一个项目封装一个类
         for(int i = 0;i < requestVo.getProjectName().size();i++){
+            //未完成的项目（封装类）
             Chart2Vo unFixChart2 = new Chart2Vo();
+            //完成的项目
             Chart2Vo fixChart2 = new Chart2Vo();
             unFixChart2.setProjectName(requestVo.getProjectName().get(i));
-            unFixChart2.setResolution(unfixStatue);
+            unFixChart2.setStatus(unfixStatue);
             fixChart2.setProjectName(requestVo.getProjectName().get(i));
-            fixChart2.setResolution(fixStatue);
+            fixChart2.setStatus(fixStatue);
             List<String> unissueKeyList = new ArrayList<>();
             List<Integer> unoriginalTimeList = new ArrayList<>();
             List<Integer> unspentTimeList = new ArrayList<>();
@@ -194,24 +233,25 @@ public class IssueServiceImpl implements IssueService {
             List<Integer> originalTimeList = new ArrayList<>();
             List<Integer> spentTimeList = new ArrayList<>();
             for(int j = 0; j < issueVoList.size();j++){
+                //对projectName做等值判断 将同一个项目的数据放在一块儿
                 if(issueVoList.get(j).getProjectName().equals(requestVo.getProjectName().get(i))){
-                    if(issueVoList.get(j).getResolution()==unfixStatue){
+                    if(issueVoList.get(j).getStatus()==unfixStatue){
                         unissueKeyList.add(issueVoList.get(j).getIssueKey());
-                        unoriginalTimeList.add(issueVoList.get(j).getAllOriginalEstimate());
-                        unspentTimeList.add(issueVoList.get(j).getAllTimeSpent());
-                    }else if(issueVoList.get(j).getResolution()==fixStatue){
+                        unoriginalTimeList.add(issueVoList.get(j).getOriginalEstimate());
+                        unspentTimeList.add(issueVoList.get(j).getTimeSpent());
+                    }else if(issueVoList.get(j).getStatus()==fixStatue){
                         issueKeyList.add(issueVoList.get(j).getIssueKey());
-                        originalTimeList.add(issueVoList.get(j).getAllOriginalEstimate());
-                        spentTimeList.add(issueVoList.get(j).getAllTimeSpent());
+                        originalTimeList.add(issueVoList.get(j).getOriginalEstimate());
+                        spentTimeList.add(issueVoList.get(j).getTimeSpent());
                     }
                 }
             }
             fixChart2.setIssueKey(issueKeyList);
-            fixChart2.setAllOriginalEstimate(originalTimeList);
-            fixChart2.setAllTimeSpent(spentTimeList);
+            fixChart2.setOriginalEstimate(originalTimeList);
+            fixChart2.setTimeSpent(spentTimeList);
             unFixChart2.setIssueKey(unissueKeyList);
-            unFixChart2.setAllOriginalEstimate(unoriginalTimeList);
-            unFixChart2.setAllTimeSpent(unspentTimeList);
+            unFixChart2.setOriginalEstimate(unoriginalTimeList);
+            unFixChart2.setTimeSpent(unspentTimeList);
             fixChart2.setSumOriginal(MathUtil.sum(originalTimeList));
             fixChart2.setSumSpent(MathUtil.sum(spentTimeList));
             chart2List.add(fixChart2);
@@ -268,7 +308,9 @@ public class IssueServiceImpl implements IssueService {
             proportionList.add(res);
         }
         Map<String,Object>resMap = new HashMap<>();
-        resMap.put("assignee",assigneeList);
+        List<String>CNameList = new ArrayList<>();
+        CNameList = new NameUtil().EtoCName(assigneeList);
+        resMap.put("assignee",CNameList);
         resMap.put("allStoryPoint",allStoryPointList);
         resMap.put("fixStoryPoint",fixStoryPointList);
         resMap.put("unFixStoryPoint",unFixStoryPointList);
@@ -286,7 +328,7 @@ public class IssueServiceImpl implements IssueService {
             projectList.add(projectName);
            // int personNum = issueDao.queryIssueAssignee(projectName).size();
             int storyPoint = issueVoList.get(i).getStoryPoint();
-            int spentTime =issueVoList.get(i).getAllTimeSpent();
+            int spentTime =issueVoList.get(i).getTimeSpent();
             String efficiency = MathUtil.division(storyPoint,spentTime);
             efficiencyList.add(efficiency);
         }
@@ -306,7 +348,7 @@ public class IssueServiceImpl implements IssueService {
             String projectName = issueVoList.get(i).getProjectName();
             projectList.add(projectName);
             int storyPoint = issueVoList.get(i).getStoryPoint();
-            int spentTime =issueVoList.get(i).getAllTimeSpent();
+            int spentTime =issueVoList.get(i).getTimeSpent();
             storyPointList.add(storyPoint);
             spentTimeList.add(spentTime);
         }
@@ -319,6 +361,8 @@ public class IssueServiceImpl implements IssueService {
     @Override
     public Map<String, Object> getMemberEfficiency(RequestVo requestVo) {
         List<IssueVo>issueVoList = new ArrayList<>();
+        NameUtil nameUtil = new NameUtil();
+        requestVo = nameUtil.CtoEName(requestVo);
         issueVoList = issueDao.queryMemberEfficiency(requestVo);
         ArrayList<String>assigneeList = new ArrayList<>();
         ArrayList<String>efficiencyList =new ArrayList<>();
@@ -326,18 +370,20 @@ public class IssueServiceImpl implements IssueService {
         Collections.sort(issueVoList, new Comparator<IssueVo>() {
             @Override
             public int compare(IssueVo o1, IssueVo o2) {
-                return MathUtil.division(o2.getStoryPoint(),o2.getAllTimeSpent()).compareTo(MathUtil.division(o1.getStoryPoint(),o1.getAllTimeSpent()));
+                return MathUtil.division(o2.getStoryPoint(),o2.getTimeSpent()).compareTo(MathUtil.division(o1.getStoryPoint(),o1.getTimeSpent()));
             }
         });
         for (int i = 0; i < issueVoList.size(); i++) {
             assigneeList.add(issueVoList.get(i).getAssignee());
-            efficiencyList.add(MathUtil.division(issueVoList.get(i).getStoryPoint(),issueVoList.get(i).getAllTimeSpent()));
+            efficiencyList.add(MathUtil.division(issueVoList.get(i).getStoryPoint(),issueVoList.get(i).getTimeSpent()));
             // sumStory += issueVoList.get(i).getStoryPoint();
-            // sumTimeSpent += issueVoList.get(i).getAllTimeSpent();
+            // sumTimeSpent += issueVoList.get(i).getTimeSpent();
         }
         //String averageEfficiency = MathUtil.division(sumStory,sumTimeSpent);
         Map<String,Object> resMap = new HashMap<>();
-        resMap.put("assignee",assigneeList);
+        List<String>CNameList = new ArrayList<>();
+        CNameList = new NameUtil().EtoCName(assigneeList);
+        resMap.put("assignee",CNameList);
         resMap.put("efficiency",efficiencyList);
         resMap.put("averageEfficiency",averageEfficiency);
         return resMap;
@@ -357,7 +403,7 @@ public class IssueServiceImpl implements IssueService {
 //            storyList.add(String.valueOf(resStoryList.get(i).getStoryPoint()));
 //            sprintList.add(resStoryList.get(i).getSprint());
 //            allStory+=resStoryList.get(i).getStoryPoint();
-//            efficiencyList.add(MathUtil.division(resEfficiencyList.get(i).getStoryPoint(),resEfficiencyList.get(i).getAllTimeSpent()));
+//            efficiencyList.add(MathUtil.division(resEfficiencyList.get(i).getStoryPoint(),resEfficiencyList.get(i).getTimeSpent()));
 //        }
 //        Map<String,Object>resMap = new HashMap<>();
 //        resMap.put("sprint",sprintList);
